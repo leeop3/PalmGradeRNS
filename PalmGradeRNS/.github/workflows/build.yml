@@ -1,0 +1,214 @@
+name: Build PalmGrade RNS APK
+
+on:
+  push:
+    branches: [ main, develop ]
+    tags:
+      - 'v*.*.*'
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Build type'
+        required: true
+        default: 'debug'
+        type: choice
+        options: [debug, release]
+
+env:
+  JAVA_VERSION: '17'
+  ANDROID_API:  '34'
+  BUILD_TOOLS:  '34.0.0'
+
+# ─────────────────────────────────────────────────────────────────────────────
+jobs:
+
+  # ── Debug build (every push / PR) ─────────────────────────────────────────
+  build-debug:
+    name: Debug APK
+    runs-on: ubuntu-latest
+    if: >
+      github.event_name != 'workflow_dispatch' ||
+      github.event.inputs.build_type == 'debug'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: temurin
+
+      # setup-gradle handles the wrapper JAR and Gradle distribution automatically
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.6'
+          cache-read-only: false
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          packages: >
+            platforms;android-${{ env.ANDROID_API }}
+            build-tools;${{ env.BUILD_TOOLS }}
+
+      - name: Build debug APK
+        run: gradle assembleDebug --stacktrace --no-daemon
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: palmgrade-debug-${{ github.run_number }}
+          path: app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 30
+
+      - name: Upload build reports on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-failure-reports-${{ github.run_number }}
+          path: app/build/reports/
+          retention-days: 7
+
+  # ── Release build (version tags or manual) ────────────────────────────────
+  build-release:
+    name: Release APK
+    runs-on: ubuntu-latest
+    if: >
+      startsWith(github.ref, 'refs/tags/v') ||
+      (github.event_name == 'workflow_dispatch' &&
+       github.event.inputs.build_type == 'release')
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: temurin
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.6'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          packages: >
+            platforms;android-${{ env.ANDROID_API }}
+            build-tools;${{ env.BUILD_TOOLS }}
+
+      # ── Keystore: store as GitHub repo secrets (see README) ──
+      # Secrets needed:
+      #   SIGNING_KEYSTORE_BASE64  — base64 of your .jks keystore file
+      #   SIGNING_KEY_ALIAS        — key alias
+      #   SIGNING_KEY_PASSWORD     — key password
+      #   SIGNING_STORE_PASSWORD   — store password
+      - name: Decode keystore
+        env:
+          SIGNING_KEYSTORE_BASE64: ${{ secrets.SIGNING_KEYSTORE_BASE64 }}
+        if: env.SIGNING_KEYSTORE_BASE64 != ''
+        run: |
+          echo "$SIGNING_KEYSTORE_BASE64" | base64 --decode \
+            > $RUNNER_TEMP/palmgrade-release.jks
+          echo "KEYSTORE_PATH=$RUNNER_TEMP/palmgrade-release.jks" >> $GITHUB_ENV
+
+      - name: Build signed release APK
+        if: env.KEYSTORE_PATH != ''
+        env:
+          SIGNING_KEY_ALIAS:      ${{ secrets.SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD:   ${{ secrets.SIGNING_KEY_PASSWORD }}
+          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+        run: |
+          gradle assembleRelease \
+            -Pandroid.injected.signing.store.file="$KEYSTORE_PATH" \
+            -Pandroid.injected.signing.store.password="$SIGNING_STORE_PASSWORD" \
+            -Pandroid.injected.signing.key.alias="$SIGNING_KEY_ALIAS" \
+            -Pandroid.injected.signing.key.password="$SIGNING_KEY_PASSWORD" \
+            --stacktrace --no-daemon
+
+      - name: Build unsigned release APK (no keystore configured)
+        if: env.KEYSTORE_PATH == ''
+        run: gradle assembleRelease --stacktrace --no-daemon
+
+      - name: Rename APK
+        run: |
+          TAG=${GITHUB_REF_NAME:-manual-$(date +%Y%m%d)}
+          find app/build/outputs/apk/release/ -name "*.apk" \
+            -exec mv {} app/build/outputs/apk/release/palmgrade-rns-${TAG}.apk \;
+
+      - name: Upload release APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: palmgrade-release-${{ github.ref_name }}
+          path: app/build/outputs/apk/release/palmgrade-rns-*.apk
+          retention-days: 90
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          name: PalmGrade RNS ${{ github.ref_name }}
+          body: |
+            ## PalmGrade RNS ${{ github.ref_name }}
+
+            Oil palm bunch quality checker over Reticulum Network Stack (RNS/LXMF).
+
+            ### Requirements
+            - Android 8.0+ (API 26+)
+            - RNode Bluetooth Classic radio (433.025 MHz LoRa)
+            - GPS enabled
+
+            ### Install via ADB
+            ```bash
+            adb install palmgrade-rns-${{ github.ref_name }}.apk
+            ```
+          files: app/build/outputs/apk/release/palmgrade-rns-*.apk
+
+  # ── Lint (PRs and main) ───────────────────────────────────────────────────
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    if: >
+      github.event_name == 'pull_request' ||
+      github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: temurin
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.6'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          packages: >
+            platforms;android-${{ env.ANDROID_API }}
+            build-tools;${{ env.BUILD_TOOLS }}
+
+      - name: Run Lint
+        run: gradle lint --no-daemon
+
+      - name: Upload Lint report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-report-${{ github.run_number }}
+          path: app/build/reports/lint-results-*.html
+          retention-days: 14

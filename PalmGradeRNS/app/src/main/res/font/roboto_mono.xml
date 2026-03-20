@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Inline font-family using system fonts.
+  Roboto is bundled on all Android 4.1+ devices.
+  This avoids a Google Fonts Provider dependency that would require
+  Play Services and a network call at first launch.
+-->
+<font-family xmlns:android="http://schemas.android.com/apk/res/android">
+</font-family>

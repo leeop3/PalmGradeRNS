@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- TX retry settings (also used in TxRetryWorker) -->
+    <integer name="tx_max_attempts">5</integer>
+    <integer name="tx_retry_interval_minutes">2</integer>
+
+    <!-- Auto-announce interval in minutes -->
+    <integer name="announce_interval_minutes">10</integer>
+
+    <!-- Grade SeekBar maximums -->
+    <integer name="grade_max_ripe">200</integer>
+    <integer name="grade_max_unripe">100</integer>
+    <integer name="grade_max_overripe">100</integer>
+    <integer name="grade_max_empty">50</integer>
+    <integer name="grade_max_damaged">50</integer>
+    <integer name="grade_max_rotten">50</integer>
+</resources>

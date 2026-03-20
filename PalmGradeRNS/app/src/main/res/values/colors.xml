@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ── Brand / Forest palette ── -->
+    <color name="forest_dark">#1C2B1A</color>
+    <color name="forest_medium">#263d1e</color>
+    <color name="forest_deep">#0d1f0c</color>
+
+    <color name="green_accent">#7ab84a</color>
+    <color name="green_light">#9dbf7a</color>
+    <color name="green_border">#4a7a30</color>
+    <color name="green_bg">#EAF3DE</color>
+    <color name="green_bg_dark">#1a2a10</color>
+
+    <color name="teal_accent">#1D9E75</color>
+    <color name="teal_bg">#E1F5EE</color>
+
+    <!-- ── Backgrounds ── -->
+    <color name="bg_primary">#F5F4F0</color>
+    <color name="bg_secondary">#ECEAE4</color>
+    <color name="card_bg">#FFFFFF</color>
+    <color name="card_submit_bg">#0d1f0c</color>
+
+    <!-- ── Borders / Dividers ── -->
+    <color name="card_border">#E0DDD6</color>
+    <color name="divider_color">#E8E6DF</color>
+    <color name="seekbar_track">#D3D1C7</color>
+
+    <!-- ── Text ── -->
+    <color name="text_primary">#1a1a18</color>
+    <color name="text_secondary">#6B6A64</color>
+    <color name="text_hint">#A8A69F</color>
+    <color name="text_on_dark">#FFFFFF</color>
+    <color name="text_success">#3B6D11</color>
+    <color name="text_warning">#854F0B</color>
+    <color name="text_danger">#791F1F</color>
+    <color name="text_info">#0C447C</color>
+
+    <!-- ── Status / Semantic ── -->
+    <color name="status_sent_bg">#EAF3DE</color>
+    <color name="status_sent_text">#3B6D11</color>
+    <color name="status_queued_bg">#FAEEDA</color>
+    <color name="status_queued_text">#854F0B</color>
+    <color name="status_error_bg">#FCEBEB</color>
+    <color name="status_error_text">#791F1F</color>
+    <color name="status_info_bg">#E6F1FB</color>
+    <color name="status_info_text">#0C447C</color>
+
+    <!-- ── Pill / Badge ── -->
+    <color name="pill_green_bg">#EAF3DE</color>
+    <color name="pill_green_text">#3B6D11</color>
+    <color name="pill_amber_bg">#FAEEDA</color>
+    <color name="pill_amber_text">#854F0B</color>
+    <color name="pill_red_bg">#FCEBEB</color>
+    <color name="pill_red_text">#791F1F</color>
+    <color name="pill_blue_bg">#E6F1FB</color>
+    <color name="pill_blue_text">#0C447C</color>
+    <color name="pill_teal_bg">#E1F5EE</color>
+    <color name="pill_teal_text">#0F6E56</color>
+    <color name="pill_gray_bg">#F1EFE8</color>
+    <color name="pill_gray_text">#444441</color>
+
+    <!-- ── Launcher icon background (matches icon's dark green) ── -->
+    <color name="ic_launcher_background">#0B3D1E</color>
+
+    <!-- ── Specific one-off colors ── -->
+    <color name="red_light">#e88888</color>
+
+    <!-- ── Tab bar ── -->
+    <color name="tab_text_normal">#5a7a48</color>
+    <color name="tab_text_selected">#9dbf7a</color>
+
+    <!-- ── Switch ── -->
+    <color name="switch_thumb_on">#7ab84a</color>
+    <color name="switch_track_on">#4a7a30</color>
+    <color name="switch_thumb_off">#A8A69F</color>
+    <color name="switch_track_off">#D3D1C7</color>
+
+    <!-- ── Material theme required colors ── -->
+    <color name="colorPrimary">#2d5a1a</color>
+    <color name="colorPrimaryVariant">#1C2B1A</color>
+    <color name="colorSecondary">#7ab84a</color>
+    <color name="colorSecondaryVariant">#4a7a30</color>
+    <color name="colorOnPrimary">#FFFFFF</color>
+    <color name="colorSurface">#FFFFFF</color>
+    <color name="colorOnSurface">#1a1a18</color>
+    <color name="colorBackground">#F5F4F0</color>
+    <color name="colorOnBackground">#1a1a18</color>
+    <color name="colorError">#A32D2D</color>
+    <color name="colorOnError">#FFFFFF</color>
+</resources>

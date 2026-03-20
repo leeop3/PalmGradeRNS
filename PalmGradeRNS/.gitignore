@@ -1,0 +1,47 @@
+# Android build outputs
+*.apk
+*.ap_
+*.aab
+
+# Build directories
+/build/
+app/build/
+*/build/
+
+# Gradle
+.gradle/
+gradle-app.setting
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
+local.properties
+
+# Android Studio / IntelliJ
+.idea/
+*.iml
+*.iws
+*.ipr
+.DS_Store
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Signing keystore — NEVER commit keystores
+*.jks
+*.keystore
+keystore.properties
+
+# Generated files
+app/src/main/assets/
+app/src/*/rs/
+app/src/main/res/raw/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+received/
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp

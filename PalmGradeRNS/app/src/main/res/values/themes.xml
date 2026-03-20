@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- ══════════════════════════════════════════
+         APP THEME
+    ══════════════════════════════════════════ -->
+    <style name="Theme.PalmGrade" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryVariant">@color/colorPrimaryVariant</item>
+        <item name="colorSecondary">@color/colorSecondary</item>
+        <item name="colorSecondaryVariant">@color/colorSecondaryVariant</item>
+        <item name="colorOnPrimary">@color/colorOnPrimary</item>
+        <item name="colorSurface">@color/colorSurface</item>
+        <item name="colorOnSurface">@color/colorOnSurface</item>
+        <item name="colorBackground">@color/colorBackground</item>
+        <item name="colorError">@color/colorError</item>
+        <item name="android:windowBackground">@color/bg_primary</item>
+        <item name="android:statusBarColor">@color/forest_dark</item>
+        <item name="android:navigationBarColor">@color/bg_primary</item>
+        <!-- Use system Roboto — always available, no Play Services needed -->
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="materialAlertDialogTheme">@style/AlertDialogTheme</item>
+    </style>
+
+    <!-- ══════════════════════════════════════════
+         TAB TEXT APPEARANCE
+    ══════════════════════════════════════════ -->
+    <style name="TabTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">10sp</item>
+        <item name="android:letterSpacing">0.05</item>
+        <item name="textAllCaps">true</item>
+    </style>
+
+    <!-- ══════════════════════════════════════════
+         CARD TITLE
+    ══════════════════════════════════════════ -->
+    <style name="CardTitle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:letterSpacing">0.1</item>
+        <item name="android:layout_marginBottom">10dp</item>
+    </style>
+
+    <!-- ══════════════════════════════════════════
+         FIELD LABEL
+    ══════════════════════════════════════════ -->
+    <style name="FieldLabel">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <!-- ══════════════════════════════════════════
+         DIVIDER
+    ══════════════════════════════════════════ -->
+    <style name="Divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0.5dp</item>
+        <item name="android:background">@color/divider_color</item>
+    </style>
+
+    <!-- ══════════════════════════════════════════
+         BUTTONS
+    ══════════════════════════════════════════ -->
+    <style name="BtnBase" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:textSize">13sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:letterSpacing">0.02</item>
+        <item name="cornerRadius">8dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+    </style>
+
+    <style name="BtnPrimary" parent="BtnBase">
+        <item name="android:backgroundTint">@color/forest_medium</item>
+        <item name="android:textColor">@color/green_light</item>
+        <item name="strokeColor">@color/green_border</item>
+        <item name="strokeWidth">1dp</item>
+    </style>
+
+    <style name="BtnSecondary" parent="BtnBase">
+        <item name="android:backgroundTint">@color/card_bg</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="strokeColor">@color/card_border</item>
+        <item name="strokeWidth">1dp</item>
+    </style>
+
+    <style name="BtnSubmit" parent="BtnBase">
+        <item name="android:backgroundTint">@color/forest_medium</item>
+        <item name="android:textColor">@color/green_light</item>
+        <item name="strokeColor">@color/green_border</item>
+        <item name="strokeWidth">1.5dp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="cornerRadius">10dp</item>
+    </style>
+
+    <style name="BtnDanger" parent="BtnBase">
+        <item name="android:backgroundTint">@color/status_error_bg</item>
+        <item name="android:textColor">@color/text_danger</item>
+        <item name="strokeColor">@color/pill_red_bg</item>
+        <item name="strokeWidth">1dp</item>
+    </style>
+
+    <!-- ══════════════════════════════════════════
+         ALERT DIALOG
+    ══════════════════════════════════════════ -->
+    <style name="AlertDialogTheme" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="colorPrimary">@color/green_accent</item>
+        <item name="colorSurface">@color/card_bg</item>
+    </style>
+
+</resources>

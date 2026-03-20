@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- External Pictures directory for proof photos -->
+    <external-files-path
+        name="pictures"
+        path="Pictures/" />
+    <!-- Internal Pictures fallback -->
+    <files-path
+        name="pictures_internal"
+        path="Pictures/" />
+    <!-- Exports (ZIP files) -->
+    <external-files-path
+        name="exports"
+        path="Documents/" />
+    <files-path
+        name="exports_internal"
+        path="exports/" />
+</paths>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Standard spacing scale -->
+    <dimen name="spacing_xs">4dp</dimen>
+    <dimen name="spacing_sm">8dp</dimen>
+    <dimen name="spacing_md">12dp</dimen>
+    <dimen name="spacing_lg">16dp</dimen>
+    <dimen name="spacing_xl">24dp</dimen>
+
+    <!-- Card corners -->
+    <dimen name="card_corner_radius">12dp</dimen>
+    <dimen name="pill_corner_radius">10dp</dimen>
+    <dimen name="input_corner_radius">8dp</dimen>
+
+    <!-- Input heights -->
+    <dimen name="input_height">44dp</dimen>
+    <dimen name="button_height_sm">36dp</dimen>
+    <dimen name="button_height_md">44dp</dimen>
+    <dimen name="button_height_lg">52dp</dimen>
+
+    <!-- App bar -->
+    <dimen name="app_header_height">56dp</dimen>
+    <dimen name="tab_height">52dp</dimen>
+
+    <!-- History item -->
+    <dimen name="thumb_size">44dp</dimen>
+</resources>

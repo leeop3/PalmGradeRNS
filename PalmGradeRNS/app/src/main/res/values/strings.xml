@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PalmGrade RNS</string>
+
+    <!-- Connection screen -->
+    <string name="title_connection">Radio &amp; Connection</string>
+    <string name="label_bt_device">Paired Bluetooth devices</string>
+    <string name="btn_connect">Connect</string>
+    <string name="btn_disconnect">Disconnect</string>
+    <string name="btn_refresh_devices">Refresh</string>
+    <!-- RNS Identity — address and hash are read-only derived values, not editable -->
+    <string name="label_lxmf_address">LXMF address</string>
+    <string name="label_identity_hash">Identity hash</string>
+    <string name="identity_readonly_note">Derived from identity keys — not editable</string>
+    <string name="btn_copy_address">Copy address</string>
+    <string name="btn_copy_identity">Copy identity hash</string>
+    <string name="btn_new_identity">Create new identity…</string>
+    <string name="new_identity_warning">This will permanently replace your current LXMF address</string>
+    <string name="label_nickname">Display name</string>
+    <string name="title_announce">Network Announce</string>
+    <string name="label_auto_announce">Auto-announce (every 10 min)</string>
+    <string name="btn_announce_now">Announce now</string>
+    <string name="title_radio_config">LoRa Radio Configuration</string>
+    <string name="label_frequency">Frequency</string>
+    <string name="value_frequency">433.025 MHz</string>
+    <string name="label_bandwidth">Bandwidth</string>
+    <string name="label_sf">Spreading factor (7–12)</string>
+    <string name="label_cr">Coding rate (5–8)</string>
+    <string name="btn_apply_radio">Apply to RNode</string>
+
+    <!-- Grading screen -->
+    <string name="title_grading">Bunch Quality Checker</string>
+    <string name="label_block_id">Block ID</string>
+    <string name="label_harvester">Harvester name</string>
+    <string name="title_grades">Grade counts</string>
+    <string name="label_ripe">Ripe</string>
+    <string name="label_unripe">Unripe</string>
+    <string name="label_overripe">Overripe</string>
+    <string name="label_empty">Empty</string>
+    <string name="label_damaged">Damaged</string>
+    <string name="label_rotten">Rotten</string>
+    <string name="label_total">Total bunches</string>
+    <string name="title_gps">GPS Location</string>
+    <string name="gps_acquiring">Acquiring GPS fix…</string>
+    <string name="title_photo">Proof Photo</string>
+    <string name="btn_capture_photo">Capture proof photo</string>
+    <string name="btn_retake_photo">Retake photo</string>
+    <string name="btn_submit">Submit record via LXMF</string>
+    <string name="status_ready">Ready to transmit over RNS</string>
+
+    <!-- History screen -->
+    <string name="title_history">Submission History</string>
+    <string name="label_today">Today</string>
+    <string name="label_sent">Sent</string>
+    <string name="label_queued">Queued</string>
+    <string name="status_sent">SENT</string>
+    <string name="status_queued">QUEUED</string>
+
+    <!-- Export screen -->
+    <string name="title_export">End-of-Day Export</string>
+    <string name="btn_package">Package as ZIP</string>
+    <string name="btn_send_wifi">Send to office server</string>
+    <string name="label_server_ip">Office server IP</string>
+    <string name="hint_server_ip">192.168.1.100</string>
+    <string name="export_status_ready">Transfer via WiFi at end of shift</string>
+
+    <!-- Errors -->
+    <string name="err_no_bt_device">No device selected</string>
+    <string name="err_no_block_id">Please enter a Block ID</string>
+    <string name="err_no_server_ip">Enter server IP address</string>
+    <string name="err_build_zip_first">Build the ZIP package first</string>
+</resources>
