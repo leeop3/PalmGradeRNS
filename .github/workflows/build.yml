@@ -21,10 +21,9 @@ env:
   ANDROID_API:  '34'
   BUILD_TOOLS:  '34.0.0'
 
-# ─────────────────────────────────────────────────────────────────────────────
 jobs:
 
-  # ── Debug build (every push / PR) ─────────────────────────────────────────
+  # ── Debug build ─────────────────────────────────────────────────────────
   build-debug:
     name: Debug APK
     runs-on: ubuntu-latest
@@ -42,12 +41,10 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: temurin
 
-      # setup-gradle handles the wrapper JAR and Gradle distribution automatically
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: '8.6'
-          cache-read-only: false
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
@@ -74,7 +71,7 @@ jobs:
           path: app/build/reports/
           retention-days: 7
 
-  # ── Release build (version tags or manual) ────────────────────────────────
+  # ── Release build ────────────────────────────────────────────────────────
   build-release:
     name: Release APK
     runs-on: ubuntu-latest
@@ -105,12 +102,13 @@ jobs:
             platforms;android-${{ env.ANDROID_API }}
             build-tools;${{ env.BUILD_TOOLS }}
 
-      # ── Keystore: store as GitHub repo secrets (see README) ──
-      # Secrets needed:
-      #   SIGNING_KEYSTORE_BASE64  — base64 of your .jks keystore file
-      #   SIGNING_KEY_ALIAS        — key alias
-      #   SIGNING_KEY_PASSWORD     — key password
-      #   SIGNING_STORE_PASSWORD   — store password
+      # Signing — store keystore as base64 in GitHub Secrets:
+      #   base64 palmgrade-release.jks   (Linux)
+      # Secrets required:
+      #   SIGNING_KEYSTORE_BASE64   ← base64-encoded .jks
+      #   PALMGRADE_KEY_ALIAS       ← key alias
+      #   PALMGRADE_KEY_PASSWORD    ← key password
+      #   PALMGRADE_STORE_PASSWORD  ← store password
       - name: Decode keystore
         env:
           SIGNING_KEYSTORE_BASE64: ${{ secrets.SIGNING_KEYSTORE_BASE64 }}
@@ -118,31 +116,29 @@ jobs:
         run: |
           echo "$SIGNING_KEYSTORE_BASE64" | base64 --decode \
             > $RUNNER_TEMP/palmgrade-release.jks
-          echo "KEYSTORE_PATH=$RUNNER_TEMP/palmgrade-release.jks" >> $GITHUB_ENV
+          echo "PALMGRADE_STORE_FILE=$RUNNER_TEMP/palmgrade-release.jks" \
+            >> $GITHUB_ENV
 
       - name: Build signed release APK
-        if: env.KEYSTORE_PATH != ''
-        env:
-          SIGNING_KEY_ALIAS:      ${{ secrets.SIGNING_KEY_ALIAS }}
-          SIGNING_KEY_PASSWORD:   ${{ secrets.SIGNING_KEY_PASSWORD }}
-          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+        if: env.PALMGRADE_STORE_FILE != ''
         run: |
           gradle assembleRelease \
-            -Pandroid.injected.signing.store.file="$KEYSTORE_PATH" \
-            -Pandroid.injected.signing.store.password="$SIGNING_STORE_PASSWORD" \
-            -Pandroid.injected.signing.key.alias="$SIGNING_KEY_ALIAS" \
-            -Pandroid.injected.signing.key.password="$SIGNING_KEY_PASSWORD" \
+            -PPALMGRADE_STORE_FILE="$PALMGRADE_STORE_FILE" \
+            -PPALMGRADE_STORE_PASSWORD="${{ secrets.PALMGRADE_STORE_PASSWORD }}" \
+            -PPALMGRADE_KEY_ALIAS="${{ secrets.PALMGRADE_KEY_ALIAS }}" \
+            -PPALMGRADE_KEY_PASSWORD="${{ secrets.PALMGRADE_KEY_PASSWORD }}" \
             --stacktrace --no-daemon
 
-      - name: Build unsigned release APK (no keystore configured)
-        if: env.KEYSTORE_PATH == ''
+      - name: Build unsigned release APK (no keystore)
+        if: env.PALMGRADE_STORE_FILE == ''
         run: gradle assembleRelease --stacktrace --no-daemon
 
       - name: Rename APK
         run: |
-          TAG=${GITHUB_REF_NAME:-manual-$(date +%Y%m%d)}
+          TAG="${GITHUB_REF_NAME:-manual-$(date +%Y%m%d)}"
           find app/build/outputs/apk/release/ -name "*.apk" \
-            -exec mv {} app/build/outputs/apk/release/palmgrade-rns-${TAG}.apk \;
+            -exec mv {} "app/build/outputs/apk/release/palmgrade-rns-${TAG}.apk" \; \
+            2>/dev/null || true
 
       - name: Upload release APK
         uses: actions/upload-artifact@v4
@@ -164,7 +160,6 @@ jobs:
             ### Requirements
             - Android 8.0+ (API 26+)
             - RNode Bluetooth Classic radio (433.025 MHz LoRa)
-            - GPS enabled
 
             ### Install via ADB
             ```bash
@@ -172,7 +167,7 @@ jobs:
             ```
           files: app/build/outputs/apk/release/palmgrade-rns-*.apk
 
-  # ── Lint (PRs and main) ───────────────────────────────────────────────────
+  # ── Lint ─────────────────────────────────────────────────────────────────
   lint:
     name: Lint
     runs-on: ubuntu-latest
@@ -210,5 +205,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: lint-report-${{ github.run_number }}
-          path: app/build/reports/lint-results-*.html
+          path: app/build/reports/lint-results*.html
           retention-days: 14

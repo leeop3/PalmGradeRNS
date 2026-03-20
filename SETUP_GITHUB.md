@@ -98,9 +98,9 @@ and add all four:
 | Secret name | Value |
 |---|---|
 | `SIGNING_KEYSTORE_BASE64` | The base64 string from above |
-| `SIGNING_KEY_ALIAS` | `palmgrade` |
-| `SIGNING_KEY_PASSWORD` | Your key password |
-| `SIGNING_STORE_PASSWORD` | Your store password |
+| `PALMGRADE_KEY_ALIAS` | `palmgrade` |
+| `PALMGRADE_KEY_PASSWORD` | Your key password |
+| `PALMGRADE_STORE_PASSWORD` | Your store password |
 
 ---
 

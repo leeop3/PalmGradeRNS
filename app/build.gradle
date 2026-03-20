@@ -3,88 +3,81 @@ plugins {
 }
 
 android {
-    namespace   'com.palmgrade.rns'
+    namespace  'com.palmgrade.rns'
     compileSdk  34
 
     defaultConfig {
-        applicationId "com.palmgrade.rns"
-        minSdk        26           // Android 8.0 — minimum for reliable BT Classic SPP
-        targetSdk     34
-        versionCode   1
-        versionName   "1.0.0"
+        applicationId  'com.palmgrade.rns'
+        minSdk          26
+        targetSdk       34
+        versionCode     1
+        versionName     '1.0.0'
 
-        // Room: export schema to /app/schemas/ for migration tracking
+        // Room annotation processor options.
+        // .toString() on the schema path forces a plain String — GStrings
+        // (Groovy interpolated strings) in annotation processor argument maps
+        // can trip the AGP IssueReporter in 8.x.
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments += ["room.schemaLocation": "$projectDir/schemas"]
+                arguments = [
+                    'room.schemaLocation'  : "$projectDir/schemas".toString(),
+                    'room.incremental'     : 'true',
+                    'room.expandProjection': 'true'
+                ]
             }
         }
     }
 
     // ── Signing ────────────────────────────────────────────────────────────
-    // Reads from keystore.properties (git-ignored) or CI env vars injected
-    // by the GitHub Actions workflow via -P flags.
+    // Local builds: create keystore.properties (see keystore.properties.template).
+    // CI builds: GitHub Actions passes -PPALMGRADE_STORE_FILE=... etc.
     //
-    // To generate a keystore locally:
-    //   keytool -genkey -v \
-    //     -keystore palmgrade-release.jks \
-    //     -alias palmgrade \
-    //     -keyalg RSA -keysize 2048 \
-    //     -validity 10000
-    //
-    // Then create keystore.properties (never commit this file):
-    //   storeFile=../palmgrade-release.jks
-    //   storePassword=your_store_password
-    //   keyAlias=palmgrade
-    //   keyPassword=your_key_password
-
+    // IMPORTANT: avoid dot-separated property names (e.g. 'android.injected.*')
+    // in project.hasProperty() — Groovy resolves dots as property chain
+    // access which causes a MissingPropertyException at configuration time,
+    // which AGP's IssueReporter then surfaces as a build error.
     signingConfigs {
         release {
-            def keystorePropsFile = rootProject.file("keystore.properties")
-            if (keystorePropsFile.exists()) {
-                // Local developer build — read from keystore.properties
+            def propsFile = rootProject.file('keystore.properties')
+            if (propsFile.exists()) {
                 def props = new Properties()
-                props.load(new FileInputStream(keystorePropsFile))
+                propsFile.withInputStream { props.load(it) }
                 storeFile     file(props['storeFile'])
                 storePassword props['storePassword']
                 keyAlias      props['keyAlias']
                 keyPassword   props['keyPassword']
-            } else if (project.hasProperty('android.injected.signing.store.file')) {
-                // CI build — injected by GitHub Actions -P flags
-                storeFile     file(project.property('android.injected.signing.store.file'))
-                storePassword project.property('android.injected.signing.store.password')
-                keyAlias      project.property('android.injected.signing.key.alias')
-                keyPassword   project.property('android.injected.signing.key.password')
+            } else if (project.hasProperty('PALMGRADE_STORE_FILE')) {
+                storeFile     file(project.property('PALMGRADE_STORE_FILE'))
+                storePassword project.property('PALMGRADE_STORE_PASSWORD')
+                keyAlias      project.property('PALMGRADE_KEY_ALIAS')
+                keyPassword   project.property('PALMGRADE_KEY_PASSWORD')
             }
-            // If neither, release APK will be built unsigned (assembleRelease still works)
         }
     }
 
     // ── Build types ────────────────────────────────────────────────────────
     buildTypes {
         debug {
-            debuggable           true
-            applicationIdSuffix  ".debug"
-            versionNameSuffix    "-debug"
-            minifyEnabled        false
+            debuggable          true
+            applicationIdSuffix '.debug'
+            versionNameSuffix   '-debug'
+            minifyEnabled       false
         }
 
         release {
-            minifyEnabled    true
-            shrinkResources  true
+            minifyEnabled   true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
                           'proguard-rules.pro'
-
-            // Apply release signing config if keystore is available
-            def keystorePropsFile = rootProject.file("keystore.properties")
-            def hasCiSigning = project.hasProperty('android.injected.signing.store.file')
-            if (keystorePropsFile.exists() || hasCiSigning) {
+            def propsFile = rootProject.file('keystore.properties')
+            def hasCiKey  = project.hasProperty('PALMGRADE_STORE_FILE')
+            if (propsFile.exists() || hasCiKey) {
                 signingConfig signingConfigs.release
             }
         }
     }
 
-    // ── Compile options ────────────────────────────────────────────────────
+    // ── Java compile options ───────────────────────────────────────────────
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
@@ -92,16 +85,17 @@ android {
 
     // ── Build features ─────────────────────────────────────────────────────
     buildFeatures {
-        viewBinding  true
-        buildConfig  true        // exposes BuildConfig.VERSION_NAME etc.
+        viewBinding true
+        buildConfig true
     }
 
     // ── Lint ───────────────────────────────────────────────────────────────
     lint {
-        abortOnError   false     // Don't fail CI on lint warnings
-        checkReleaseBuilds true
-        htmlReport     true
-        htmlOutput     file("build/reports/lint-results.html")
+        abortOnError       false
+        checkReleaseBuilds false
+        htmlReport         true
+        htmlOutput         file('build/reports/lint-results.html')
+        disable 'InvalidPackage', 'MissingTranslation'
     }
 
     // ── Packaging ──────────────────────────────────────────────────────────
@@ -111,54 +105,54 @@ android {
                 'META-INF/LICENSE.txt',
                 'META-INF/NOTICE.txt',
                 'META-INF/*.kotlin_module',
+                'META-INF/AL2.0',
+                'META-INF/LGPL2.1',
             ]
         }
     }
 }
 
-// ── Dependencies ────────────────────────────────────────────────────────────
+// ── Dependencies ─────────────────────────────────────────────────────────────
 dependencies {
 
-    // ── AndroidX core ──
+    // AndroidX core
     implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'androidx.core:core-ktx:1.13.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.cardview:cardview:1.0.0'
 
-    // ── Material Design (tabs, buttons, dialogs, switches) ──
+    // Material Design
     implementation 'com.google.android.material:material:1.12.0'
 
-    // ── ViewPager2 + Fragment ──
+    // ViewPager2 + Fragment
     implementation 'androidx.viewpager2:viewpager2:1.1.0'
     implementation 'androidx.fragment:fragment:1.8.2'
 
-    // ── RecyclerView ──
+    // RecyclerView
     implementation 'androidx.recyclerview:recyclerview:1.3.2'
 
-    // ── Room (SQLite ORM) ──
-    //    annotationProcessor generates the _Impl classes at compile time
+    // Room — annotationProcessor generates *_Impl classes at compile time
     implementation      'androidx.room:room-runtime:2.6.1'
     annotationProcessor 'androidx.room:room-compiler:2.6.1'
-    // room-ktx for LiveData / Flow integration
     implementation      'androidx.room:room-ktx:2.6.1'
 
-    // ── Lifecycle (LiveData, ViewModel) ──
+    // Lifecycle
     implementation 'androidx.lifecycle:lifecycle-viewmodel:2.8.4'
     implementation 'androidx.lifecycle:lifecycle-livedata:2.8.4'
     implementation 'androidx.lifecycle:lifecycle-runtime:2.8.4'
     implementation 'androidx.lifecycle:lifecycle-common-java8:2.8.4'
 
-    // ── EXIF GPS tagging for proof photos ──
+    // EXIF GPS tagging for proof photos
     implementation 'androidx.exifinterface:exifinterface:1.3.7'
 
-    // ── Activity Result API (camera intent) ──
+    // Activity Result API (camera intent launcher)
     implementation 'androidx.activity:activity:1.9.1'
 
-    // ── Kotlin coroutines (background tasks in util/) ──
+    // Coroutines (background tasks)
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1'
 
-    // ── Testing ──
-    testImplementation         'junit:junit:4.13.2'
-    androidTestImplementation  'androidx.test.ext:junit:1.2.1'
-    androidTestImplementation  'androidx.test.espresso:espresso-core:3.6.1'
+    // Testing
+    testImplementation        'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
 }

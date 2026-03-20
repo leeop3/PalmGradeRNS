@@ -1,10 +1,10 @@
-// Top-level build file.
-// Repository declarations belong in settings.gradle (dependencyResolutionManagement),
-// NOT here — having them here conflicts with RepositoriesMode.FAIL_ON_PROJECT_REPOS.
+// Root build.gradle
+// Repositories are declared in settings.gradle dependencyResolutionManagement.
+// Do NOT add a repositories {} block here — it conflicts with
+// RepositoriesMode.PREFER_SETTINGS and triggers IssueReporter errors.
 
 plugins {
     id 'com.android.application' version '8.3.2' apply false
-    id 'com.android.library'     version '8.3.2' apply false
 }
 
 tasks.register('clean', Delete) {
