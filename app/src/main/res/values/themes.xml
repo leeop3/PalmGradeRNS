@@ -12,12 +12,14 @@
         <item name="colorOnPrimary">@color/colorOnPrimary</item>
         <item name="colorSurface">@color/colorSurface</item>
         <item name="colorOnSurface">@color/colorOnSurface</item>
-        <item name="colorBackground">@color/colorBackground</item>
+        <!-- android:colorBackground is the correct framework attr.
+             Plain 'colorBackground' is NOT a Material Components attr —
+             using it causes Aapt2Exception: attr/colorBackground not found. -->
+        <item name="android:colorBackground">@color/colorBackground</item>
         <item name="colorError">@color/colorError</item>
         <item name="android:windowBackground">@color/bg_primary</item>
         <item name="android:statusBarColor">@color/forest_dark</item>
         <item name="android:navigationBarColor">@color/bg_primary</item>
-        <!-- Use system Roboto — always available, no Play Services needed -->
         <item name="android:fontFamily">sans-serif</item>
         <item name="materialAlertDialogTheme">@style/AlertDialogTheme</item>
     </style>
@@ -25,7 +27,9 @@
     <!-- ══════════════════════════════════════════
          TAB TEXT APPEARANCE
     ══════════════════════════════════════════ -->
-    <style name="TabTextAppearance" parent="TextAppearance.Design.Tab">
+    <!-- TextAppearance.Design.Tab is the old Support Library parent and is
+         not available when using Material Components. Use the MDC equivalent. -->
+    <style name="TabTextAppearance" parent="TextAppearance.MaterialComponents.Tab">
         <item name="android:textSize">10sp</item>
         <item name="android:letterSpacing">0.05</item>
         <item name="textAllCaps">true</item>
