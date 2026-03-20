@@ -27,9 +27,11 @@
     <!-- ══════════════════════════════════════════
          TAB TEXT APPEARANCE
     ══════════════════════════════════════════ -->
-    <!-- TextAppearance.Design.Tab is the old Support Library parent and is
-         not available when using Material Components. Use the MDC equivalent. -->
-    <style name="TabTextAppearance" parent="TextAppearance.MaterialComponents.Tab">
+    <!-- Tab text appearance for TabLayout.
+         TextAppearance.MaterialComponents.Tab does NOT exist in MDC 1.12.0.
+         Use TextAppearance.AppCompat.Small as the base — it is always
+         present and gives us a clean 12sp starting point to override. -->
+    <style name="TabTextAppearance" parent="TextAppearance.AppCompat.Small">
         <item name="android:textSize">10sp</item>
         <item name="android:letterSpacing">0.05</item>
         <item name="textAllCaps">true</item>
