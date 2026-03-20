@@ -53,6 +53,27 @@ jobs:
             platforms;android-${{ env.ANDROID_API }}
             build-tools;${{ env.BUILD_TOOLS }}
 
+      # Guarantee gradle.properties exists with the required AndroidX flag.
+      # This step is a safety net in case the file is missing from the repo
+      # or was excluded by .gitignore. It only sets the property if not
+      # already present, so it never overwrites an existing value.
+      - name: Ensure gradle.properties has android.useAndroidX
+        run: |
+          PROPS="gradle.properties"
+          if [ ! -f "$PROPS" ]; then
+            echo "gradle.properties not found — creating it"
+            touch "$PROPS"
+          fi
+          if ! grep -q "android.useAndroidX" "$PROPS"; then
+            echo "android.useAndroidX=true"  >> "$PROPS"
+            echo "android.enableJetifier=false" >> "$PROPS"
+            echo "org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8" >> "$PROPS"
+            echo "Injected android.useAndroidX=true into gradle.properties"
+          else
+            echo "android.useAndroidX already set: $(grep android.useAndroidX "$PROPS")"
+          fi
+          cat "$PROPS"
+
       - name: Build debug APK
         run: gradle assembleDebug --stacktrace --no-daemon
 
@@ -102,13 +123,16 @@ jobs:
             platforms;android-${{ env.ANDROID_API }}
             build-tools;${{ env.BUILD_TOOLS }}
 
-      # Signing — store keystore as base64 in GitHub Secrets:
-      #   base64 palmgrade-release.jks   (Linux)
-      # Secrets required:
-      #   SIGNING_KEYSTORE_BASE64   ← base64-encoded .jks
-      #   PALMGRADE_KEY_ALIAS       ← key alias
-      #   PALMGRADE_KEY_PASSWORD    ← key password
-      #   PALMGRADE_STORE_PASSWORD  ← store password
+      - name: Ensure gradle.properties has android.useAndroidX
+        run: |
+          PROPS="gradle.properties"
+          if [ ! -f "$PROPS" ]; then touch "$PROPS"; fi
+          if ! grep -q "android.useAndroidX" "$PROPS"; then
+            echo "android.useAndroidX=true"  >> "$PROPS"
+            echo "android.enableJetifier=false" >> "$PROPS"
+            echo "org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8" >> "$PROPS"
+          fi
+
       - name: Decode keystore
         env:
           SIGNING_KEYSTORE_BASE64: ${{ secrets.SIGNING_KEYSTORE_BASE64 }}
@@ -196,6 +220,15 @@ jobs:
           packages: >
             platforms;android-${{ env.ANDROID_API }}
             build-tools;${{ env.BUILD_TOOLS }}
+
+      - name: Ensure gradle.properties has android.useAndroidX
+        run: |
+          PROPS="gradle.properties"
+          if [ ! -f "$PROPS" ]; then touch "$PROPS"; fi
+          if ! grep -q "android.useAndroidX" "$PROPS"; then
+            echo "android.useAndroidX=true"  >> "$PROPS"
+            echo "android.enableJetifier=false" >> "$PROPS"
+          fi
 
       - name: Run Lint
         run: gradle lint --no-daemon
