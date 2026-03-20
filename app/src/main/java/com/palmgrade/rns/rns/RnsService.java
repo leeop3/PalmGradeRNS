@@ -74,7 +74,16 @@ public class RnsService extends Service implements RNodeBluetoothManager.RNodeLi
         identity   = new RnsIdentity(this);
         btManager  = new RNodeBluetoothManager(this);
         btManager.setListener(this);
-        startForeground(NOTIF_ID, buildNotification("RNS offline — tap to connect"));
+
+        // API 34+ requires the serviceType flag matching the manifest declaration.
+        // Use the 3-argument overload on Q+ and fall back to 2-argument on older APIs.
+        Notification notification = buildNotification("RNS offline — tap to connect");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            startForeground(NOTIF_ID, notification,
+                android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE);
+        } else {
+            startForeground(NOTIF_ID, notification);
+        }
     }
 
     @Override

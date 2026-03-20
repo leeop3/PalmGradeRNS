@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.palmgrade.rns.bluetooth.RNodeBluetoothManager;
 import com.palmgrade.rns.grading.BunchRecord;
 import com.palmgrade.rns.rns.RnsService;
 import com.palmgrade.rns.storage.BunchRecordRepository;
